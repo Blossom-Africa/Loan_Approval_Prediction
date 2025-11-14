@@ -1,5 +1,5 @@
 # About the Project
-## Problem Statment
+## Problem Statement
 Heritage Unity Bank (HUB), a mid-sized Nigerian financial institution, has been expanding its retail banking services over the past five years. With Nigeria’s growing middle class and digital banking adoption, HUB introduced several consumer loan products, personal, business, and mortgage loans to increase its customer base and strengthen Nigeria’s economy.
 The bank has recently been facing challenges with loan approvals. Many legitimate customers are being denied loans, while some approved loans have defaulted early. 
 
