@@ -17,7 +17,9 @@ theme = gr.themes.Citrus(
 )
 
 logo_html = """
-<div style="display: flex; align-items: center; padding: 10px; background-color:pink;">
+<div style="text-align:center";>
+<p style="font-style:italic";>Heritage Union Bank</p>
+<p style="font-style:italic";>Expertise. Commitment. Value..</p>
 </div>
 """
 css = """
@@ -26,8 +28,18 @@ css = """
     justify-content: flex-start;   /* align left */
 }
 """
+js_func = """
+function refresh() {
+    const url = new URL(window.location);
 
-rf_model = joblib.load("C:/Users/USER/anaconda_projects/Python_Blossom/loan_approval.pkl")
+    if (url.searchParams.get('__theme') !== 'dark') {
+        url.searchParams.set('__theme', 'dark');
+        window.location.href = url.href;
+    }
+}
+"""
+
+rf_model = joblib.load("loan_approval.pkl")
 education_map = {"Graduate":0,"Not Graduate":1}
 employed_map = {"No":0,"Yes":1}
 def predict_loan(no_dependents,edu,self_employed,income_anum,loan_amt,loan_term,credit_score,rav, cav,lav,bav):
@@ -46,7 +58,10 @@ def predict_loan(no_dependents,edu,self_employed,income_anum,loan_amt,loan_term,
         "luxury_assets_value":[lav],
         "bank_asset_value":[bav]    
         })
-        prediction= rf_model.predict(input_data)[0]
+        if all([no_dependents,edu,self_employed,income_anum,loan_amt,loan_term,credit_score,rav, cav,lav,bav]):
+            prediction= rf_model.predict(input_data)[0]
+        else:
+            return "Form must be filled completely"
     except KeyError:
        return "Please fill form!"
    
@@ -64,7 +79,7 @@ form = gr.Interface(fn=predict_loan,inputs=[gr.Number(label="Number of Dependent
                         gr.Dropdown(["Yes", "No"],label="Self Employed?", value=None),
                         gr.Number(label="Income Per Annum (₦)"),
                         gr.Number(label="Loan Amount (₦)"),
-                        gr.Slider(minimum=0,maximum=20, label="Loan Term"),
+                        gr.Slider(minimum=0,maximum=20, label="Loan Term",step=1),
                         gr.Slider(minimum=300, maximum=950, label="Credit Score"),
                         gr.Number(label="Resedential Assets Value (₦)"), 
                         gr.Number(label="Commercial Assets Value (₦)"),
@@ -76,14 +91,14 @@ form = gr.Interface(fn=predict_loan,inputs=[gr.Number(label="Number of Dependent
                                             
                                             )
 
-with gr.Blocks(theme=theme, css=css,title="Loan Application Form") as demo:
+with gr.Blocks(theme=theme, css=css,title="Loan Application Form", js=js_func) as demo:
      with gr.Row():
         with gr.Column():
             gr.Image("HUBLogo.gif",
                 elem_id="logo-box",
-                show_label=False, height=150, show_download_button=False, show_fullscreen_button=False, container=False
+                show_label=False, height=120, show_download_button=False, show_fullscreen_button=False, container=False
             )
 
      form.render()
-     #gr.HTML(logo_html)
-demo.launch()
+     gr.HTML(logo_html)
+demo.launch(auth=("Customer","group4"))
